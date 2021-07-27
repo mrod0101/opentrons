@@ -8,7 +8,7 @@ import requests
 logger = logging.getLogger(__name__)
 
 
-class OtRobot:  # pylint: disable=R0903
+class OtRobot:
     """Opentrons Robot."""
 
     RETRIES = 5

@@ -6,7 +6,6 @@ from dotenv import load_dotenv, find_dotenv
 from selenium.webdriver.chrome.options import Options
 
 logger = logging.getLogger(__name__)
-# pylint: disable:unused-argument
 
 # Check to see if we have a dotenv file and use it
 if find_dotenv():
@@ -21,6 +20,7 @@ def chrome_options() -> Options:
     assert (
         executable_path is not None
     ), "EXECUTABLE_PATH environment variable must be set"
+    logger.info(f"EXECUTABLE_PATH is {executable_path}")
     options.binary_location = executable_path
     options.add_argument("whitelisted-ips=''")
     options.add_argument("disable-xss-auditor")
