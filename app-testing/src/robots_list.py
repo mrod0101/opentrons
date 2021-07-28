@@ -18,7 +18,9 @@ class RobotsList:
     DEV = "dev"
     spinner: tuple = (By.CSS_SELECTOR, "svg[class*=spin]")
     header: tuple = (By.XPATH, '//h2[text()="Robots"]')
-    refresh_list: tuple = (By.CSS_SELECTOR, '//button[text()="refresh list"]')
+    refresh_list: tuple = (By.XPATH, '//button[text()="refresh list"]')
+    no_robots_found: tuple = (By.XPATH, '//h3[text()="No robots found!"]')
+    try_again_button: tuple = (By.XPATH, '//button[text()="try again"]')
 
     def __init__(self, driver: WebDriver) -> None:
         """Initialize with driver."""
@@ -39,3 +41,25 @@ class RobotsList:
             EC.element_to_be_clickable(toggle_locator)
         )
         return toggle
+
+    def wait_for_spinner_invisible(self) -> None:
+        """Wait for spinner to become invisible.  This should take 30 seconds."""
+        WebDriverWait(self.driver, 31).until(
+            EC.invisibility_of_element_located(RobotsList.spinner)
+        )
+
+    def wait_for_spinner_visible(self) -> None:
+        """Wait for spinner to become visible.  This should take ~1 seconds."""
+        WebDriverWait(self.driver, 2).until(
+            EC.visibility_of_element_located(RobotsList.spinner)
+        )
+
+    @highlight
+    def get_no_robots_found(self) -> WebElement:
+        """Search without waiting for the h3 No robots found!"""
+        return self.driver.find_element(*RobotsList.no_robots_found)
+
+    @highlight
+    def get_try_again_button(self) -> WebElement:
+        """Find with no waiting the TRY AGAIN button."""
+        return self.driver.find_element(*RobotsList.try_again_button)
