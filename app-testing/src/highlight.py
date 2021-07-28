@@ -1,10 +1,13 @@
 """Highlight an element."""
+import functools
+import os
 import time
+from typing import Callable, Any
 from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 
 
-def highlight(
+def apply_border(
     element: WebElement, effect_time_sec: int, color: str, border_size_px: int
 ) -> None:
     """Highlights (blinks) a Selenium Webdriver element."""
@@ -20,3 +23,19 @@ def highlight(
     apply_style(f"border: {border_size_px}px solid {color};")
     time.sleep(effect_time_sec)
     apply_style(original_style)
+
+
+Func = Callable[..., Any]
+
+
+def highlight(func: Func) -> WebElement:
+    """Highlight the Webelement returned by the function."""
+
+    @functools.wraps(func)
+    def wrapper_highlight(*args: Any, **kwargs: Any) -> WebElement:
+        element = func(*args, **kwargs)
+        if os.getenv("SLOWMO").lower() == "true":
+            apply_border(element, 2, "magenta", 3)
+        return element
+
+    return wrapper_highlight

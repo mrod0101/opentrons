@@ -1,5 +1,4 @@
 """Model for the list of robots."""
-import os
 from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
@@ -32,12 +31,11 @@ class RobotsList:
             != -1
         )
 
+    @highlight
     def get_robot_toggle_by_name(self, name: str) -> WebElement:
         """Retrieve the Webelement toggle buttone for a robot by name."""
         toggle_locator: tuple = get_robot_toggle_selector_by_name(name)
-        toggle: WebElement = WebDriverWait(self.driver, 5000).until(
+        toggle: WebElement = WebDriverWait(self.driver, 5).until(
             EC.element_to_be_clickable(toggle_locator)
         )
-        if os.getenv("SLOWMO"):
-            highlight(toggle, 3, "blue", 3)
         return toggle
