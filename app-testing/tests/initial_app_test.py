@@ -14,7 +14,7 @@ from src.ot_application import OtApplication
 logger = logging.getLogger(__name__)
 
 
-def test_initial_load(chrome_options: Options) -> None:
+def test_initial_load_docker_robot(chrome_options: Options) -> None:
     """Test the initail load of the app with docker emulated robot."""
     robot = OtRobot()
     # expecting docker emulated robot
@@ -33,4 +33,3 @@ def test_initial_load(chrome_options: Options) -> None:
         robot_page = RobotPage(driver)
         robot_page.header(robots_list.DEV)
         robot_page.experimental_protocol_engine_toggle()
-        print(driver.capabilities)
