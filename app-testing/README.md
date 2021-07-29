@@ -10,7 +10,7 @@ Slices of the release cycle tests will be selected as candidates for automation 
 chromedriver against current electron version (see [package.json](../package.json))
 $ chromedriver --version
 ChromeDriver 76.0.3809.126 (d80a294506b4c9d18015e755cee48f953ddc3f2f-refs/branch-heads/3809@{#1024})
-This must be on path or path set explicitly by parameter in code.
+This must be on path
 
 ## Steps
 
@@ -19,3 +19,14 @@ This must be on path or path set explicitly by parameter in code.
 1. create .env from example.env
    1. fill in values
 1. make test
+
+## ToDo
+
+- link to smartsheets tests
+- screenshots
+- reporting
+
+## commands
+
+use xdist
+`pipenv run pytest -n3`

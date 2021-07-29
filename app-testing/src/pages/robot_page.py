@@ -6,7 +6,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 
-from src.highlight import highlight
+from src.driver.highlight import highlight
 
 
 class RobotPage:
@@ -14,7 +14,7 @@ class RobotPage:
 
     experimental_protocol_engine_toggle_locator = (
         By.CSS_SELECTOR,
-        "button[aria-label='Enable Experimental Protocol Engine']",
+        "button[aria-label='Enable experimental protocol engine']",
     )
 
     def __init__(self, driver: WebDriver) -> None:
@@ -32,7 +32,7 @@ class RobotPage:
     @highlight
     def experimental_protocol_engine_toggle(self) -> WebElement:
         """Toggle button element for the experimental protocol engine."""
-        toggle: WebElement = WebDriverWait(self.driver, 5).until(
+        toggle: WebElement = WebDriverWait(self.driver, 2).until(
             EC.element_to_be_clickable(
                 RobotPage.experimental_protocol_engine_toggle_locator
             )

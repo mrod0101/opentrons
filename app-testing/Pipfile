@@ -17,6 +17,7 @@ selenium = "*"
 importlib-metadata = "*"
 requests = "*"
 python-dotenv = "*"
+pytest-xdist = "*"
 
 [requires]
 python_version = "3.7"

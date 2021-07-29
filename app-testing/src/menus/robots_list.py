@@ -4,12 +4,29 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from src.highlight import highlight
+
+from src.driver.highlight import highlight
 
 
-def get_robot_toggle_selector_by_name(name: str) -> tuple:
+def get_robot_toggle_selector(name: str) -> tuple:
     """Get the locator tuple for a robot's toggle by name of the robot."""
     return (By.XPATH, f"//a[contains(@href,{name})]//button")
+
+
+def get_robot_pipette_link_selector(name: str) -> tuple:
+    """Get the locator tuple for a robot's pipette link by name of the robot."""
+    return (
+        By.XPATH,
+        f'//ol//a[contains(@href,"#/robots/opentrons-{name}/instruments")]',
+    )
+
+
+def get_robot_modules_link_selector(name: str) -> tuple:
+    """Get the locator tuple for a robot's modules link by name of the robot."""
+    return (
+        By.XPATH,
+        f'//ol//a[contains(@href,"#/robots/opentrons-{name}/modules")]',
+    )
 
 
 class RobotsList:
@@ -26,21 +43,36 @@ class RobotsList:
         """Initialize with driver."""
         self.driver: WebDriver = driver
 
-    def is_robot_toggle_active_by_name(self, name: str) -> bool:
+    def is_robot_toggle_active(self, name: str) -> bool:
         """Is a toggle for a robot 'on' using the name of the robot."""
-        return (
-            self.get_robot_toggle_by_name(name).get_attribute("class").find("_on_")
-            != -1
-        )
+        return self.get_robot_toggle(name).get_attribute("class").find("_on_") != -1
 
     @highlight
-    def get_robot_toggle_by_name(self, name: str) -> WebElement:
+    def get_robot_toggle(self, name: str) -> WebElement:
         """Retrieve the Webelement toggle buttone for a robot by name."""
-        toggle_locator: tuple = get_robot_toggle_selector_by_name(name)
+        toggle_locator: tuple = get_robot_toggle_selector(name)
         toggle: WebElement = WebDriverWait(self.driver, 5).until(
             EC.element_to_be_clickable(toggle_locator)
         )
         return toggle
+
+    @highlight
+    def get_robot_pipettes_link(self, name: str) -> WebElement:
+        """Retrieve the pipettes link for a robot by name."""
+        link_locator: tuple = get_robot_pipette_link_selector(name)
+        link: WebElement = WebDriverWait(self.driver, 2).until(
+            EC.element_to_be_clickable(link_locator)
+        )
+        return link
+
+    @highlight
+    def get_robot_modules_link(self, name: str) -> WebElement:
+        """Retrieve the modules link for a robot by name."""
+        link_locator: tuple = get_robot_modules_link_selector(name)
+        link: WebElement = WebDriverWait(self.driver, 2).until(
+            EC.element_to_be_clickable(link_locator)
+        )
+        return link
 
     def wait_for_spinner_invisible(self) -> None:
         """Wait for spinner to become invisible.  This should take 30 seconds."""
@@ -56,7 +88,7 @@ class RobotsList:
 
     @highlight
     def get_no_robots_found(self) -> WebElement:
-        """Search without waiting for the h3 No robots found!"""
+        """Find with no waiting the h3 No robots found!"""
         return self.driver.find_element(*RobotsList.no_robots_found)
 
     @highlight

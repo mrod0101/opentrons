@@ -34,6 +34,8 @@ def highlight(func: Func) -> WebElement:
     @functools.wraps(func)
     def wrapper_highlight(*args: Any, **kwargs: Any) -> WebElement:
         element = func(*args, **kwargs)
+        if not os.getenv("SLOWMO"):
+            return element
         if os.getenv("SLOWMO").lower() == "true":
             apply_border(element, 2, "magenta", 3)
         return element

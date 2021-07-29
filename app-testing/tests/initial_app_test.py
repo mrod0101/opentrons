@@ -6,13 +6,13 @@ from pathlib import Path
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
-from src.ot_robot import OtRobot
-from src.robots_list import RobotsList
-from src.robot_page import RobotPage
-from src.left_menu import LeftMenu
-from src.ot_application import OtApplication
-from src.more_menu import MoreMenu
-from src.more_menu import MenuItems
+from src.menus.left_menu import LeftMenu
+from src.menus.robots_list import RobotsList
+from src.menus.more_menu import MoreMenu
+from src.menus.more_menu import MenuItems
+from src.pages.robot_page import RobotPage
+from src.resources.ot_robot import OtRobot
+from src.resources.ot_application import OtApplication
 
 logger = logging.getLogger(__name__)
 
@@ -31,15 +31,20 @@ def test_initial_load_docker_robot(chrome_options: Options) -> None:
         )
         logger.info(ot_application.config)
         robots_list = RobotsList(driver)
-        if not robots_list.is_robot_toggle_active_by_name(RobotsList.DEV):
-            robots_list.get_robot_toggle_by_name(RobotsList.DEV).click()
+        if not robots_list.is_robot_toggle_active(RobotsList.DEV):
+            robots_list.get_robot_toggle(RobotsList.DEV).click()
         robot_page = RobotPage(driver)
         robot_page.header(robots_list.DEV)
         robot_page.experimental_protocol_engine_toggle()
+        robots_list.get_robot_pipettes_link(RobotsList.DEV).click()
+        robots_list.get_robot_modules_link(RobotsList.DEV).click()
 
 
 def test_initial_load_no_robot(chrome_options: Options) -> None:
-    """Test the initail load of the app with docker emulated robot."""
+    """Test the initail load of the app with NO docker emulated robot.
+
+    Note that this test takes > 30 seconds to validate spinner stops after 30.
+    """
     # app cannot see docker robot
     os.environ["OT_APP_DISCOVERY__CANDIDATES"] = ""
     # use variable to prevent the popup
@@ -58,7 +63,7 @@ def test_initial_load_no_robot(chrome_options: Options) -> None:
 
 
 def test_more_menu_no_robot(chrome_options: Options) -> None:
-    """Test the initail load of the app with docker emulated robot."""
+    """Test the more menu with no docker emulated robot."""
     # app cannot see docker robot
     os.environ["OT_APP_DISCOVERY__CANDIDATES"] = ""
     # use variable to prevent the popup
