@@ -18,6 +18,8 @@ importlib-metadata = "*"
 requests = "*"
 python-dotenv = "*"
 pytest-xdist = "*"
+pyautogui = "*"
+pyobjc = "*"
 
 [requires]
 python_version = "3.7"

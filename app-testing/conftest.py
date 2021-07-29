@@ -1,9 +1,16 @@
 """For pytest."""
 import logging
 import os
+import shutil
+from os import listdir
+from os.path import isfile, join
+from pathlib import Path
+from typing import List
 import pytest
 from dotenv import load_dotenv, find_dotenv
 from selenium.webdriver.chrome.options import Options
+
+collect_ignore_glob = ["files/**/*.py"]
 
 logger = logging.getLogger(__name__)
 
@@ -32,3 +39,51 @@ def chrome_options() -> Options:
     options.add_argument("allow-elevated-browser")
     options.add_argument("verbose")
     return options
+
+
+@pytest.fixture(scope="function")
+def calibrate() -> None:
+    """A fixture which will inject config files for the docker robot.
+
+    This makes the docker robot think it is calibrated.
+    """
+    config_files_folder = Path(Path(__file__).resolve().parent, "files/config")
+    config_files_paths = [
+        file
+        for file in listdir(config_files_folder)
+        if isfile(join(config_files_folder, file))
+    ]
+    destination_paths: List[str] = []
+    for path in config_files_paths:
+        source_path = Path(config_files_folder, path)
+        period_count = path.count(".")
+        # periods are the delimiter in the filename for mapping into .opentrons_config
+        # except for the last period which is for the file extension
+        new_path = path.replace(".", "/", period_count - 1)
+        destination_path = join(
+            Path(__file__).resolve().parents[1], ".opentrons_config", new_path
+        )
+        logger.debug(f"config file destination = {destination_path}")
+        if os.path.exists(Path(destination_path).parent):
+            if os.path.exists(destination_path):
+                os.remove(destination_path)
+        else:
+            os.mkdir(Path(destination_path).parent)
+        shutil.copy(source_path, destination_path)
+        destination_paths.append(destination_path)
+    yield destination_paths
+    logger.debug(f"removing files: {destination_paths}")
+    for path in destination_paths:
+        os.remove(path)
+
+
+@pytest.fixture(scope="session")
+def protocols() -> dict:
+    """Provide a fixture with a dictionary of test protocol files."""
+    # build this manually for now
+    return {
+        "python1": Path(
+            Path(__file__).resolve().parent,
+            "files/protocol/python1/test_drive.py",
+        ),
+    }

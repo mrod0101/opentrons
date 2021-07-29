@@ -2,7 +2,7 @@
 import functools
 import os
 import time
-from typing import Callable, Any
+from typing import Callable, Any, Optional
 from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 
@@ -28,7 +28,7 @@ def apply_border(
 Func = Callable[..., Any]
 
 
-def highlight(func: Func) -> WebElement:
+def highlight(func: Func) -> Optional[WebElement]:
     """Highlight the Webelement returned by the function."""
 
     @functools.wraps(func)
@@ -36,8 +36,10 @@ def highlight(func: Func) -> WebElement:
         element = func(*args, **kwargs)
         if not os.getenv("SLOWMO"):
             return element
-        if os.getenv("SLOWMO").lower() == "true":
-            apply_border(element, 2, "magenta", 3)
+        if os.getenv("SLOWMO").lower() == "true" and element:
+            apply_border(
+                element, int(os.getenv("HIGHLIGHT_SECONDS", "2")), "magenta", 3
+            )
         return element
 
     return wrapper_highlight

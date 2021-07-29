@@ -17,6 +17,7 @@ class LeftMenu:
 
     robot: tuple = (By.XPATH, '//a[contains(@href,"#/robots")]')
     protocol: tuple = (By.XPATH, '//a[contains(@href,"#/protocol")]')
+    protocol_upload: tuple = (By.XPATH, '//a[contains(@href,"#/upload")]')
     calibrate: tuple = (By.XPATH, '//a[contains(@href,"#/calibrate")]')
     more: tuple = (By.XPATH, '//a[contains(@href,"#/more")]')
 
@@ -30,3 +31,14 @@ class LeftMenu:
     def click_more_button(self) -> None:
         """Click on the more menu."""
         self.get_more_button().click()
+
+    @highlight
+    def get_protocol_upload_button(self) -> WebElement:
+        """Search for the protocol menu button."""
+        return WebDriverWait(self.driver, 2).until(
+            EC.element_to_be_clickable(LeftMenu.protocol_upload)
+        )
+
+    def click_protocol_upload_button(self) -> None:
+        """Click on the protobcol menu."""
+        self.get_protocol_upload_button().click()
