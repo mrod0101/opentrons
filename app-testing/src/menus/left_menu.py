@@ -40,5 +40,5 @@ class LeftMenu:
         )
 
     def click_protocol_upload_button(self) -> None:
-        """Click on the protobcol menu."""
+        """Click on the protocol menu."""
         self.get_protocol_upload_button().click()
