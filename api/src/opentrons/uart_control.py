@@ -13,7 +13,7 @@ class CommandType(str, enum.Enum):
 
 class MotorCommand(enum.Enum):
     stop = (0x00, CommandType.write, ">I")
-    status = (0x01, CommandType.read, ">Iccccc")
+    status = (0x01, CommandType.read, ">Ic")
     move = (0x10, CommandType.write, ">I")
     setup = (0x02, CommandType.write, ">I")
     set_speed = (0x03, CommandType.write, ">II")
@@ -27,7 +27,7 @@ class MotorCommand(enum.Enum):
 
 class MotorControl:
     def __init__(self, uri: str):
-        self._port = serial_for_url(uri, baudrate=9600, timeout=5)
+        self._port = serial_for_url(uri, baudrate=115200, timeout=5)
 
     @property
     def port(self):
