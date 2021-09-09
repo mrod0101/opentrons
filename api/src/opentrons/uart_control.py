@@ -18,6 +18,7 @@ class MotorCommand(enum.Enum):
     setup = (0x02, CommandType.write, ">I")
     set_speed = (0x03, CommandType.write, ">II")
     get_speed = (0x04, CommandType.read, ">II")
+    set_distance = (0x06, CommandType.write, ">II")
 
     def __init__(self, value, type, data_format):
         self.id = value
