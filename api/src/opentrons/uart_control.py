@@ -14,7 +14,7 @@ class CommandType(str, enum.Enum):
 class MotorCommand(enum.Enum):
     stop = (0x00, CommandType.write, ">I")
     status = (0x01, CommandType.read, ">Ic")
-    move = (0x10, CommandType.write, ">I")
+    move = (0x10, CommandType.write, ">II")
     setup = (0x02, CommandType.write, ">I")
     set_speed = (0x03, CommandType.write, ">II")
     get_speed = (0x04, CommandType.read, ">II")
