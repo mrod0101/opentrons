@@ -1,0 +1,42 @@
+[tool.poetry]
+name = "notify-server"
+version = "4.6.2"
+description = "Notification pub/sub server for Opentrons robots"
+authors = ["Opentrons Labworks <engineering@opentrons.com>"]
+license = "Apache-2.0"
+readme = "README.rst"
+repository = "https://github.com/Opentrons/opentrons"
+homepage = "https://github.com/Opentrons/opentrons/tree/edge/notify-server"
+keywords = ["robots", "protocols", "synbio", "pcr", "automation", "lab"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
+    "Intended Audience :: Science/Research",
+    "Operating System :: OS Independent",
+    "Topic :: Scientific/Engineering",
+    "Typing :: Typed",
+]
+
+[tool.poetry.dependencies]
+python = "~3.7"
+opentrons = "4.6.2"
+opentrons-shared-data = "4.6.2"
+pyzmq = "19.0.2"
+pydantic = "1.8.2"
+
+[tool.poetry.dev-dependencies]
+opentrons = { path = "../api", develop = true }
+opentrons-shared-data = { path = "../shared-data/python", develop = true }
+flake8 = "^3.9.0"
+flake8-annotations = "^2.6.2"
+flake8-docstrings = "^1.6.0"
+mock = "^4.0.2"
+mypy = "0.800"
+pytest = "6.1.0"
+pytest-cov = "2.10.1"
+pytest-asyncio = "0.15.1"
+pytest-xdist = "^2.2.1"
+
+[build-system]
+requires = ["poetry_core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

@@ -123,7 +123,6 @@ calibrations/
 api/pyproject.toml
 robot-server/pyproject.toml
 update-server/pyproject.toml
-notify-server/pyproject.toml
 shared-data/python/pyproject.toml
 
 # typescript incremental files

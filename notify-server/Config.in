@@ -5,7 +5,6 @@ config BR2_PACKAGE_PYTHON_OPENTRONS_NOTIFY_SERVER
   select BR2_PACKAGE_PYTHON_OPENTRONS_SHARED_DATA # runtime
   select BR2_PACKAGE_PYTHON_PYDANTIC # runtime
   select BR2_PACKAGE_PYTHON_PYZMQ # runtime
-  select BR2_PACKAGE_PYTHON_TYPING_EXTENSIONS # runtime
 
   help
     Opentrons notification server for OT2 robot.
