@@ -145,6 +145,7 @@ class SmoothieDriver:
         self._config = config
 
         self._gpio_chardev = gpio_chardev
+        self._serial_lock = asyncio.Lock()
 
         # Current settings:
         # The amperage of each axis, has been organized into three states:
@@ -862,9 +863,10 @@ class SmoothieDriver:
         if self.simulating:
             return ""
         try:
-            return await self._send_command_unsynchronized(
-                command, ack_timeout, timeout
-            )
+            async with self._serial_lock:
+                return await self._send_command_unsynchronized(
+                    command, ack_timeout, timeout
+                )
         except SmoothieError as se:
             # XXX: This is a reentrancy error because another command could
             # swoop in here. We're already resetting though and errors (should
