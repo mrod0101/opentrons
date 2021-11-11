@@ -182,6 +182,15 @@ settings = [
         ),
         restart_required=True,
     ),
+    SettingDefinition(
+        _id="enableOT3HardwareController",
+        title="Enable experimental OT3 hardware controller",
+        description=(
+            "Do not enable. This is an Opentrons-internal setting to test "
+            "new hardware."
+        ),
+        restart_required=True,
+    ),
 ]
 
 if ARCHITECTURE == SystemArchitecture.BUILDROOT:
@@ -404,6 +413,16 @@ def _migrate9to10(previous: SettingsMap) -> SettingsMap:
     return newmap
 
 
+def _migrate10to11(previous: SettingsMap) -> SettingsMap:
+    """Migrate to version 11 of the feature flags file.
+
+    - Adds the enableOT3HardwareController config element.
+    """
+    newmap = {k: v for k, v in previous.items()}
+    newmap["enableOT3HardwareController"] = None
+    return newmap
+
+
 _MIGRATIONS = [
     _migrate0to1,
     _migrate1to2,
@@ -415,6 +434,7 @@ _MIGRATIONS = [
     _migrate7to8,
     _migrate8to9,
     _migrate9to10,
+    _migrate10to11,
 ]
 """
 List of all migrations to apply, indexed by (version - 1). See _migrate below

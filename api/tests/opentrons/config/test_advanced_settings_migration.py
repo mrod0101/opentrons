@@ -7,7 +7,7 @@ from opentrons.config.advanced_settings import _migrate, _ensure
 
 @pytest.fixture
 def migrated_file_version() -> int:
-    return 10
+    return 11
 
 
 @pytest.fixture
@@ -23,6 +23,7 @@ def default_file_settings() -> Dict[str, Optional[bool]]:
         "enableHttpProtocolSessions": None,
         "enableProtocolEngine": None,
         "disableFastProtocolUpload": None,
+        "enableOT3HardwareController": None,
     }
 
 
@@ -158,6 +159,18 @@ def v10_config(v9_config):
     return r
 
 
+@pytest.fixture
+def v11_config(v10_config):
+    r = v10_config.copy()
+    r.update(
+        {
+            "_version": 11,
+            "enableOT3HardwareController": True,
+        }
+    )
+    return r
+
+
 @pytest.fixture(
     scope="session",
     params=[
@@ -173,6 +186,7 @@ def v10_config(v9_config):
         lazy_fixture("v8_config"),
         lazy_fixture("v9_config"),
         lazy_fixture("v10_config"),
+        lazy_fixture("v11_config"),
     ],
 )
 def old_settings(request):
@@ -246,4 +260,5 @@ def test_ensures_config():
         "enableHttpProtocolSessions": None,
         "enableProtocolEngine": None,
         "disableFastProtocolUpload": None,
+        "enableOT3HardwareController": None,
     }

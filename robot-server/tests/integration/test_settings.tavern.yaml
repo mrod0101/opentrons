@@ -66,6 +66,12 @@ stages:
             description: !re_search 'Opentrons-internal setting to test new protocol execution logic'
             restart_required: true
             value: !anything
+          - id: enableOT3HardwareController
+            old_id: Null
+            title: Enable experimental OT3 hardware controller
+            description: !re_search 'Opentrons-internal setting to test new hardware'
+            restart_required: true
+            value: !anything
         links: !anydict
 
 ---
@@ -85,6 +91,7 @@ marks:
         - enableDoorSafetySwitch
         - disableFastProtocolUpload
         - enableHttpProtocolSessions
+        - enableProtocolEngine
         - enableProtocolEngine
   - parametrize:
       key: value
