@@ -49,6 +49,13 @@ from opentrons.protocols.api_support.util import (
     APIVersionError,
 )
 
+# EVALUATE BEFORE MERGE:
+# This seems very very likely to me to cause circular import problems. Why doesn't it?
+from opentrons.protocol_engine import (
+    DeckSlotLocation as PEDeckSlotLocation,
+    LabwareView as PELabwareView,
+)
+
 if TYPE_CHECKING:
     from opentrons_shared_data.labware.dev_types import LabwareDefinition
 
@@ -82,6 +89,7 @@ class ProtocolContext(CommandPublisher):
         loop: asyncio.AbstractEventLoop = None,
         broker=None,
         api_version: Optional[APIVersion] = None,
+        pe_labware_view: Optional[PELabwareView] = None,
     ) -> None:
         """Build a :py:class:`.ProtocolContext`.
 
@@ -91,6 +99,16 @@ class ProtocolContext(CommandPublisher):
                       specified, a dummy one is used.
         :param api_version: The API version to use. If this is ``None``, uses
                             the max supported version.
+        :param pe_labware_view: A Protocol Engine labware view.
+                                When a labware is loaded on this context or one of its
+                                child module contexts, this labware view is searched for
+                                a positional offset to apply to the new labware.
+
+                                Beware: This context will normally run in a separate,
+                                concurrent thread to the one where the
+                                Protocol Engine is running and updating. It's calling
+                                code's responsibility to make sure it's thread-safe for
+                                this context to access the given labware view at will.
         """
         super().__init__(broker)
 
@@ -116,6 +134,10 @@ class ProtocolContext(CommandPublisher):
         self._labware_load_broker = EquipmentBroker[LabwareLoadInfo]()
         self._instrument_load_broker = EquipmentBroker[InstrumentLoadInfo]()
         self._module_load_broker = EquipmentBroker[ModuleLoadInfo]()
+
+        # EVALUATE BEFORE MERGE:
+        # Should this be a property of the ProtocolContext, or the implementation?
+        self._pe_labware_view = pe_labware_view
 
     @property
     def labware_load_broker(self) -> EquipmentBroker[LabwareLoadInfo]:
@@ -185,6 +207,29 @@ class ProtocolContext(CommandPublisher):
             "Please use with caution."
         )
         return self._implementation.get_hardware()
+
+    def _apply_pe_labware_offset(
+        self, location: types.DeckLocation, labware: Labware
+    ) -> Optional[str]:
+        """Fix up labware so it has an offset provided by Protocol Engine."""
+        deck_slot_name = types.DeckSlotName.from_primitive(location)
+
+        if self._pe_labware_view is None:
+            return None
+        else:
+            offset = self._pe_labware_view.find_applicable_labware_offset(
+                definition_uri=labware.uri,
+                location=PEDeckSlotLocation(slotName=deck_slot_name),
+            )
+            if offset is None:
+                # Probably unnecessary, but just to be safe.
+                labware.set_calibration(delta=types.Point(0, 0, 0))
+                return None
+            else:
+                labware.set_calibration(
+                    delta=types.Point(offset.vector.x, offset.vector.y, offset.vector.z)
+                )
+                return offset.id
 
     @property  # type: ignore
     @requires_version(2, 0)
@@ -380,6 +425,10 @@ class ProtocolContext(CommandPublisher):
         )
         result = Labware(implementation=implementation)
 
+        applied_offset_id = self._apply_pe_labware_offset(
+            location=location, labware=result
+        )
+
         result_namespace, result_load_name, result_version = result.uri.split("/")
         self.labware_load_broker.publish(
             LabwareLoadInfo(
@@ -388,6 +437,7 @@ class ProtocolContext(CommandPublisher):
                 labware_load_name=result_load_name,
                 labware_version=int(result_version),
                 deck_slot=types.DeckSlotName.from_primitive(location),
+                offset_id=applied_offset_id,
             )
         )
 
@@ -433,6 +483,10 @@ class ProtocolContext(CommandPublisher):
         )
         result = Labware(implementation=implementation)
 
+        applied_offset_id = self._apply_pe_labware_offset(
+            location=location, labware=result
+        )
+
         result_namespace, result_load_name, result_version = result.uri.split("/")
         self.labware_load_broker.publish(
             LabwareLoadInfo(
@@ -441,6 +495,7 @@ class ProtocolContext(CommandPublisher):
                 labware_load_name=result_load_name,
                 labware_version=int(result_version),
                 deck_slot=types.DeckSlotName.from_primitive(location),
+                offset_id=applied_offset_id,
             )
         )
 
@@ -839,6 +894,7 @@ class LabwareLoadInfo:
     labware_load_name: str
     labware_version: int
     deck_slot: types.DeckSlotName
+    offset_id: Optional[str]
 
 
 @dataclass(frozen=True)

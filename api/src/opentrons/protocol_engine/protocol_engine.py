@@ -61,7 +61,12 @@ class ProtocolEngine:
 
     @property
     def state_view(self) -> StateView:
-        """Get an interface to retrieve calculated state values."""
+        """Get an interface to retrieve the current state and calculated values.
+
+        The returned `StateView` will automatically see subsequent updates to the
+        Protocol Engine's state. You do not need to call this property again to get
+        updated values.
+        """
         return self._state_store
 
     def add_plugin(self, plugin: AbstractPlugin) -> None:

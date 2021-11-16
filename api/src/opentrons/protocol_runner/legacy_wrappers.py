@@ -21,7 +21,6 @@ from opentrons.protocol_api.protocol_context import (
 )
 from opentrons.protocol_api.contexts import ModuleContext as LegacyModuleContext
 
-
 from opentrons.protocols.parse import parse
 from opentrons.protocols.execution.execute import run_protocol
 from opentrons.protocols.types import (
@@ -29,6 +28,8 @@ from opentrons.protocols.types import (
     JsonProtocol as LegacyJsonProtocol,
     PythonProtocol as LegacyPythonProtocol,
 )
+
+from opentrons.protocol_engine import LabwareView
 
 from .protocol_source import ProtocolSource
 
@@ -67,10 +68,13 @@ class LegacyFileReader:
 class LegacyContextCreator:
     """Interface to construct Protocol API v2 contexts."""
 
+    # EVALUATE BEFORE MERGE:
+    # What belongs on __init__() and what belongs on .create()?
     def __init__(
         self,
         hardware_api: HardwareAPI,
         use_simulating_implementation: bool,
+        labware_view: LabwareView,
     ) -> None:
         """Prepare the LegacyContextCreator.
 
@@ -83,9 +87,11 @@ class LegacyContextCreator:
                 should use a simulating implementation, avoiding some calls to
                 `hardware_api` for performance. See
                 `opentrons.protocols.context.simulator`.
+            labware_view: Passed to the ``ProtocolContext`` constructor.
         """
         self._hardware_api = hardware_api
         self._use_simulating_implementation = use_simulating_implementation
+        self._labware_view = labware_view
 
     def create(
         self,
@@ -98,6 +104,7 @@ class LegacyContextCreator:
                 implementation=LegacyProtocolContextSimulation(
                     api_version=api_version, hardware=self._hardware_api
                 ),
+                pe_labware_view=self._labware_view.snapshot()
             )
         else:
             return LegacyProtocolContext(
@@ -106,6 +113,7 @@ class LegacyContextCreator:
                     api_version=api_version,
                     hardware=self._hardware_api,
                 ),
+                pe_labware_view=self._labware_view.snapshot()
             )
 
 

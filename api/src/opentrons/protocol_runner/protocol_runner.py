@@ -76,6 +76,7 @@ class ProtocolRunner:
         self._python_executor = python_executor or PythonExecutor()
         self._legacy_file_reader = legacy_file_reader or LegacyFileReader()
         self._legacy_context_creator = legacy_context_creator or LegacyContextCreator(
+            labware_view=protocol_engine.state_view.labware,
             hardware_api=hardware_api,
             use_simulating_implementation=False,
         )

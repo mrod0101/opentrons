@@ -356,3 +356,9 @@ class LabwareView(HasState[LabwareState]):
             ):
                 return candidate
         return None
+
+    # EVALUATE BEFORE MERGE:
+    # How gross is this?
+    def snapshot(self) -> LabwareView:
+        """Return a copy of this view that won't auto-update on future state change."""
+        return LabwareView(state=self._state)
