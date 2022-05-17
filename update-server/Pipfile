@@ -7,7 +7,7 @@ name = "pypi"
 python_version = "3.7"
 
 [packages]
-aiohttp = "==3.4.4"
+aiohttp = "==3.7.4"
 
 [dev-packages]
 otupdate = {path = ".", editable = true}
