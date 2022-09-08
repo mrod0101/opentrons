@@ -36,7 +36,7 @@
     "core-js": "3.2.1",
     "file-saver": "2.0.1",
     "formik": "2.1.4",
-    "jszip": "3.2.2",
+    "jszip": "3.7.0",
     "lodash": "4.17.15",
     "mixpanel-browser": "2.29.1",
     "query-string": "6.2.0",
