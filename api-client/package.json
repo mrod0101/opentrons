@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@opentrons/shared-data": "4.6.2",
-    "axios": "^0.21.1",
+    "axios": "^1.6.3",
     "react-query": "3.12.0"
   }
 }
