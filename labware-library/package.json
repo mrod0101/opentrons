@@ -32,7 +32,7 @@
     "@opentrons/components": "4.6.2",
     "ajv": "6.10.2",
     "classnames": "2.2.5",
-    "cookie": "0.4.0",
+    "cookie": "0.7.0",
     "core-js": "3.2.1",
     "file-saver": "2.0.1",
     "formik": "2.1.4",
