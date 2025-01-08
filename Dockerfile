@@ -1,4 +1,4 @@
-FROM ubuntu as base
+FROM ubuntu:24.10 as base
 ENV TZ=Etc/UTC
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 RUN apt-get update && apt-get install --yes python3 pip pkg-config libsystemd-dev
